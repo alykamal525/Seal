@@ -38,6 +38,15 @@ jobs:
         chmod +x gradlew
         ./gradlew assembleGenericRelease
 
+    - name: Rename APKs
+      run: |
+        cd app/build/outputs/apk/generic/release
+        for f in Seal-*.apk; do
+          n=$(echo "$f" | sed -E 's/^Seal-[^-]*-[^-]*-generic-//; s/-release\.apk$//')
+          mv "$f" "LOKA-DOWNLOADER-$n.apk"
+        done
+        ls -la
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
