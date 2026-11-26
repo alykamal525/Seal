@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -23,22 +22,26 @@ jobs:
 
     - uses: gradle/actions/setup-gradle@v3
 
-    - run: gradle assembleRelease
+    - name: Create signing key
+      run: |
+        PW=$(openssl rand -hex 16)
+        keytool -genkeypair -keystore "$GITHUB_WORKSPACE/loka.jks" -alias loka -keyalg RSA -keysize 2048 -validity 10000 -storepass "$PW" -keypass "$PW" -dname "CN=Loka Downloader"
+        {
+          echo "keyAlias=loka"
+          echo "keyPassword=$PW"
+          echo "storeFile=$GITHUB_WORKSPACE/loka.jks"
+          echo "storePassword=$PW"
+        } > keystore.properties
 
-    - name: Sign app APK
-      id: sign_app
-      uses: ilharp/sign-android-release@nightly
-      with:
-        releaseDir: app/build/outputs/apk/release
-        signingKey: ${{ secrets.SIGNING_KEY }}
-        keyAlias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_PASSWORD }}
+    - name: Build
+      run: |
+        chmod +x gradlew
+        ./gradlew assembleGenericRelease
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: signed-apks
-        path: app/build/outputs/apk/release/*-arm64-v8a-release-signed.apk
+        name: loka-downloader-apk
+        path: app/build/outputs/apk/generic/release/*.apk
         if-no-files-found: error
-        retention-days: 20
+        retention-days: 30
