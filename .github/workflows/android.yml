@@ -17,9 +17,6 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-
     - uses: gradle/actions/setup-gradle@v3
 
     - name: Create signing key
