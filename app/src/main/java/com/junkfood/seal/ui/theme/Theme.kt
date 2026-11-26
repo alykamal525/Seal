@@ -43,33 +43,21 @@ fun SealTheme(
 
     LaunchedEffect(darkTheme) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (darkTheme) {
-                view.windowInsetsController?.setSystemBarsAppearance(
-                    0,
-                    APPEARANCE_LIGHT_STATUS_BARS,
-                )
-            } else {
-                view.windowInsetsController?.setSystemBarsAppearance(
-                    APPEARANCE_LIGHT_STATUS_BARS,
-                    APPEARANCE_LIGHT_STATUS_BARS,
-                )
-            }
+            view.windowInsetsController?.setSystemBarsAppearance(0, APPEARANCE_LIGHT_STATUS_BARS)
         }
     }
 
     val colorScheme =
-        dynamicColorScheme(!darkTheme).run {
-            if (isHighContrastModeEnabled && darkTheme)
-                copy(
-                    surface = Color.Black,
-                    background = Color.Black,
-                    surfaceContainerLowest = Color.Black,
-                    surfaceContainerLow = surfaceContainerLowest,
-                    surfaceContainer = surfaceContainerLow,
-                    surfaceContainerHigh = surfaceContainerLow,
-                    surfaceContainerHighest = surfaceContainer,
-                )
-            else this
+        dynamicColorScheme(false).run {
+            copy(
+                surface = Color.Black,
+                background = Color.Black,
+                surfaceContainerLowest = Color.Black,
+                surfaceContainerLow = Color(0xFF121212),
+                surfaceContainer = Color(0xFF1A1A1A),
+                surfaceContainerHigh = Color(0xFF222222),
+                surfaceContainerHighest = Color(0xFF2A2A2A),
+            )
         }
 
     val textStyle =
